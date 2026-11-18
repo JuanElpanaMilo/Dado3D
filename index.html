@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dado Interactivo DADAMENTE</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #f0f2f5;
+            font-family: Arial, sans-serif;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Contenedor principal de la escena 3D */
+        .scene {
+            width: 250px;
+            height: 250px;
+            margin-bottom: 40px;
+            perspective: 1000px;
+        }
+
+        /* Estructura del cubo */
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: translateZ(-125px);
+            transition: transform 1s cubic-bezier(0.15, 0.85, 0.35, 1.2);
+            cursor: pointer;
+        }
+
+        /* Estilo común para las 6 caras */
+        .cube__face {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border: 2px solid #ccc;
+            background: white;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            /* Evita que se transparenten las caras traseras de manera extraña */
+            backface-visibility: visible; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cube__face img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Posicionamiento 3D corregido de cada cara del dado */
+        .cube__face--1 { transform: rotateY(0deg) translateZ(125px); }
+        .cube__face--2 { transform: rotateY(180deg) translateZ(125px); }
+        .cube__face--3 { transform: rotateY(90deg) translateZ(125px); }
+        .cube__face--4 { transform: rotateY(-90deg) translateZ(125px); }
+        .cube__face--5 { transform: rotateX(90deg) translateZ(125px); }
+        .cube__face--6 { transform: rotateX(-90deg) translateZ(125px); }
+
+        /* Botón para lanzar el dado */
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #ff5722;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #e64a19;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Dado Dadamente</h1>
+
+    <div class="scene">
+        <div class="cube" id="cube">
+            <!-- Asegúrate de que los archivos de imagen se llamen exactamente así en tu repositorio -->
+            <div class="cube__face cube__face--1"><img src="cara1.webp" alt="Cara 1"></div>
+            <div class="cube__face cube__face--2"><img src="cara2.webp" alt="Cara 2"></div>
+            <div class="cube__face cube__face--3"><img src="cara3.webp" alt="Cara 3"></div>
+            <div class="cube__face cube__face--4"><img src="cara4.webp" alt="Cara 4"></div>
+            <div class="cube__face cube__face--5"><img src="cara5.webp" alt="Cara 5"></div>
+            <div class="cube__face cube__face--6"><img src="cara6.webp" alt="Cara 6"></div>
+        </div>
+    </div>
+
+    <button id="rollButton">¡Lanzar Dado!</button>
+
+    <script>
+        const cube = document.getElementById('cube');
+        const rollButton = document.getElementById('rollButton');
+
+        // Rotaciones base exactas para alinear cada cara al frente
+        const rotations = [
+            { x: 0, y: 0 },       // Cara 1
+            { x: 0, y: -180 },    // Cara 2
+            { x: 0, y: -90 },     // Cara 3
+            { x: 0, y: 90 },      // Cara 4
+            { x: -90, y: 0 },     // Cara 5
+            { x: 90, y: 0 }       // Cara 6
+        ];
+
+        let currentX = 0;
+        let currentY = 0;
+
+        function rollDice() {
+            const randomFace = Math.floor(Math.random() * 6);
+            
+            // Incrementamos vueltas completas para que el giro se vea dinámico y aleatorio
+            const extraTurnsX = (Math.floor(Math.random() * 3) + 4) * 360;
+            const extraTurnsY = (Math.floor(Math.random() * 3) + 4) * 360;
+
+            currentX = rotations[randomFace].x + extraTurnsX;
+            currentY = rotations[randomFace].y + extraTurnsY;
+
+            cube.style.transform = `translateZ(-125px) rotateX(${currentX}deg) rotateY(${currentY}deg)`;
+        }
+
+        rollButton.addEventListener('click', rollDice);
+        cube.addEventListener('click', rollDice);
+    </script>
+
+</body>
+</html>
